@@ -14,6 +14,7 @@ public class ZerobaseCourse {
     private String logo;
 
     private String status;
+//    private CourseStatus status;
 
     private LocalDate startAt;
 
