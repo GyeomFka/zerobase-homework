@@ -1,9 +1,11 @@
 package com.example.zerobase;
 
+import com.example.zerobase.domain.CourseStatus;
 import com.example.zerobase.domain.ZerobaseCourse;
 import com.example.zerobase.domain.ZerobaseCourseRepository;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -16,34 +18,28 @@ public class Homework {
 
     public Optional<ZerobaseCourse> getZerobaseCourse(Long id) {
         // TODO: id 가 일치하며, hidden = false 인 강의만 조회되어야 함
-        Optional<ZerobaseCourse> optionalCourse = repository.findAll().stream()
-            .filter(course -> course.getId() == id)
-            .filter(course -> course.isHidden() == false)
+        return repository.findAll().stream()
+            .filter(c -> Objects.equals(c.getId(), id))
+            .filter(c -> !c.isHidden())
             .findAny();
-
-        return optionalCourse;
     }
 
-    public List<ZerobaseCourse> getZerobaseCourse(String status) {
+    public List<ZerobaseCourse> getZerobaseCourse(CourseStatus status) {
         // TODO: status가 일치하고, hidden = false 인 강의들이 조회되어야 함
-        List<ZerobaseCourse> courseList = repository.findAll().stream()
-            .filter(course -> course.getStatus().equals(status))
-            .filter(course -> course.isHidden() == false)
+        return repository.findAll().stream()
+            .filter(c -> c.getStatus() == status)
+            .filter(c -> !c.isHidden())
             .collect(Collectors.toList());
-
-        return courseList;
     }
 
     public List<ZerobaseCourse> getOpenZerobaseCourse(LocalDate targetDt) {
         // TODO: status = "OPEN" 이고, hidden = false 이며,
         //  startAt <= targetDt && targetDt <= endAt 인 강의만 조회되어야함.
-        List<ZerobaseCourse> courseList = repository.findAll().stream()
-            .filter(course -> course.getStatus().equals("OPEN"))
-            .filter(course -> course.getStartAt().isBefore(targetDt))
-            .filter(course -> course.getEndAt().isAfter(targetDt))
-            .filter(course -> course.isHidden() == false)
+        return repository.findAll().stream()
+            .filter(c -> c.getStatus() == CourseStatus.OPEN)
+            .filter(c -> c.getStartAt().isBefore(targetDt))
+            .filter(c -> c.getEndAt().isAfter(targetDt))
+            .filter(c -> !c.isHidden())
             .collect(Collectors.toList());
-
-        return courseList;
     }
 }

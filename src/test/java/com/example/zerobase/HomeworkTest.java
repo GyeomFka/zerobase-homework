@@ -1,5 +1,6 @@
 package com.example.zerobase;
 
+import com.example.zerobase.domain.CourseStatus;
 import com.example.zerobase.domain.ZerobaseCourse;
 import com.example.zerobase.domain.ZerobaseCourseMockRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -21,21 +22,22 @@ class HomeworkTest {
     @Test
     @DisplayName("IN_PROGRESS 상태의 강의가 모두 조회된다.")
     public void getCourse__IN_PROGRESS() {
-        List<ZerobaseCourse> inProgressMockList = homework.getZerobaseCourse("IN_PROGRESS");
+        List<ZerobaseCourse> inProgressMockList = homework.getZerobaseCourse(
+            CourseStatus.IN_PROGRESS);
         assertThat(inProgressMockList.size()).isEqualTo(2L);
     }
 
     @Test
     @DisplayName("CLOSE 상태의 강의가 모두 조회된다.")
     public void getCourse__CLOSE() {
-        List<ZerobaseCourse> inProgressMockList = homework.getZerobaseCourse("CLOSE");
+        List<ZerobaseCourse> inProgressMockList = homework.getZerobaseCourse(CourseStatus.CLOSE);
         assertThat(inProgressMockList.size()).isEqualTo(1L);
     }
 
     @Test
     @DisplayName("OPEN 상태의 강의가 모두 조회된다.")
     public void getCourse__OPEN() {
-        List<ZerobaseCourse> inProgressMockList = homework.getZerobaseCourse("OPEN");
+        List<ZerobaseCourse> inProgressMockList = homework.getZerobaseCourse(CourseStatus.OPEN);
         assertThat(inProgressMockList.size()).isEqualTo(2L);
     }
 
@@ -47,6 +49,14 @@ class HomeworkTest {
         assertThat(inProgressMockList.size()).isEqualTo(1L);
     }
 
+    @Test
+    @DisplayName("현재 시간 기준 36개월 전의 강의를 조회한다.")
+    public void getCourse__long_ago() {
+        List<ZerobaseCourse> inProgressMockList = homework.getOpenZerobaseCourse(
+            LocalDate.now().minusMonths(36));
+        assertThat(inProgressMockList.size()).isEqualTo(0L);
+    }
+
 
     @Test
     @DisplayName("유효하지 않은 id를 넣었을때 비어있는 옵셔널이 리턴된다.")
@@ -54,7 +64,6 @@ class HomeworkTest {
         Optional<ZerobaseCourse> zerobaseCourse = homework.getZerobaseCourse(-1L);
         assertThat(zerobaseCourse.isPresent()).isFalse();
     }
-
 
     private Map<Long, ZerobaseCourse> createMock() {
         return Map.ofEntries(
